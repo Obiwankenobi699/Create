@@ -1,40 +1,32 @@
-import jsonfile from "jsonfile";
-import moment from "moment";
-import simpleGit from "simple-git";
-import random from "random";
+// Create clock container
+const clock = document.createElement("div");
+clock.style.fontSize = "4rem";
+clock.style.fontFamily = "monospace";
+clock.style.color = "#00ffcc";
+clock.style.textAlign = "center";
+clock.style.marginTop = "20vh";
 
-const path = "./data.json";
+// Set background
+document.body.style.backgroundColor = "#121212";
+document.body.style.display = "flex";
+document.body.style.justifyContent = "center";
+document.body.style.alignItems = "center";
+document.body.style.height = "100vh";
+document.body.style.margin = "0";
 
-const markCommit = (x, y) => {
-  const date = moment()
-    .subtract(1, "y")
-    .add(1, "d")
-    .add(x, "w")
-    .add(y, "d")
-    .format();
+// Add to body
+document.body.appendChild(clock);
 
-  const data = {
-    date: date,
-  };
+// Clock logic
+function updateClock() {
+  const now = new Date();
+  const hrs = String(now.getHours()).padStart(2, "0");
+  const mins = String(now.getMinutes()).padStart(2, "0");
+  const secs = String(now.getSeconds()).padStart(2, "0");
 
-  jsonfile.writeFile(path, data, () => {
-    simpleGit().add([path]).commit(date, { "--date": date }).push();
-  });
-};
+  clock.textContent = `${hrs}:${mins}:${secs}`;
+}
 
-const makeCommits = (n) => {
-  if(n===0) return simpleGit().push();
-  const x = random.int(0, 54);
-  const y = random.int(0, 6);
-  const date = moment().subtract(1, "y").add(1, "d").add(x, "w").add(y, "d").format();
-
-  const data = {
-    date: date,
-  };
-  console.log(date);
-  jsonfile.writeFile(path, data, () => {
-    simpleGit().add([path]).commit(date, { "--date": date },makeCommits.bind(this,--n));
-  });
-};
-
-makeCommits(100);
+// Start ticking
+updateClock();
+setInterval(updateClock, 1000);
